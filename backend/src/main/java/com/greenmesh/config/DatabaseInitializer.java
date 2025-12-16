@@ -40,11 +40,19 @@ public class DatabaseInitializer {
     }
 
     private void ensureDefaultUser() {
-        jdbcTemplate.update("""
-                MERGE INTO USERS (ID, USERNAME, PASSWORD, ROLE)
-                KEY(USERNAME)
-                VALUES (1, 'admin', 'admin123', 'admin')
-                """);
+        // DM8 does not support the H2-style MERGE ... KEY syntax, so do update-then-insert.
+        int updated = jdbcTemplate.update(
+                "UPDATE USERS SET PASSWORD = ?, ROLE = ? WHERE USERNAME = ?",
+                "admin123", "admin", "admin");
+        if (updated == 0) {
+            try {
+                jdbcTemplate.update(
+                        "INSERT INTO USERS (ID, USERNAME, PASSWORD, ROLE) VALUES (?, ?, ?, ?)",
+                        1L, "admin", "admin123", "admin");
+            } catch (DataAccessException ex) {
+                log.warn("Default admin user insert failed (maybe already exists); continuing.", ex);
+            }
+        }
         log.info("Default admin user (admin/admin123) ensured for dev only.");
     }
 }
