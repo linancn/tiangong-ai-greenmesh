@@ -20,14 +20,17 @@
 前端要点
 - 技术栈：Vite 7、React 19、TypeScript、MUI、TanStack Query、React Router、ECharts。`src/api/mockClient.ts` 为示例数据，真实接口接入后替换。
 - 命令：`npm run dev` / `build` / `lint` / `test` / `format`。
+- 测试：React Testing Library + Vitest，示例 `src/features/auth/LoginPage.test.tsx`。
 
 后端要点
 - 依赖：web/validation/actuator、data-redis、spring-kafka、H2(dev)、DM8 JDBC(外部)。
 - 探活接口：`GET /api/status`。
-- `application.yml`：profiles `dev`(H2) / `dm8`(达梦)；Flyway disabled in dm8；Redis/Kafka 通过 env 覆盖。
+- `application.yml`：profiles `dev`(H2) / `dm8`(达梦)；Flyway disabled in dm8；Redis/Kafka 通过 env 覆盖。DM8 URL 形如 `jdbc:dm://host:5236?schema=SYSDBA`（默认 schema=SYSDBA），需提供 `DM8_USER/DM8_PASSWORD`。
 - CORS：`app.cors.allowed-origins` 支持配置（默认 http://localhost:5173）。
-- 认证占位：`/api/auth/login` 返回 token，未来需接入 IAM/OIDC，并替换硬编码账号。
+- 认证与数据：`/api/auth/login` 现读取数据库表 `USERS`（JdbcTemplate，启动时自动建表并插入默认账号 admin/admin123，仅限开发），需上线前接入 IAM/OIDC 并移除默认账号。
+- 测试：`./gradlew test`（包含 AuthController 登录流程测试，使用 dev profile/H2）。
 - 快速联调脚本：`run-dev.sh`（根目录），从 `.env` 读取口令，启动 docker compose（dm8/kafka/redis/flink/grafana），并并行启动后端 dm8 profile 与前端 dev（VITE_API_BASE 默认 http://localhost:8080）。修改 `.env` 后再运行。
+- 统一检查脚本：`run-checks.sh`（根目录）依次运行前端 lint/test 与后端 test。
 
 CI/CD 与环境
 - 当前未配置 CI。若添加，请确保 `.env`、`libs/`、任何密钥均不入库，并用 Secret 管理。
@@ -37,3 +40,4 @@ CI/CD 与环境
 2) 不得提交任何真实口令、令牌、证书或私有驱动；敏感文件需在 `.gitignore` 中确保忽略。
 3) 新增服务或配置时，明确默认值是否需通过环境变量覆盖，并在此文件记录。
 4) 变更联调栈（docker-compose）或运行命令时，更新对应说明。
+5) 提交前务必跑 `./run-checks.sh`（前端 lint/test + 后端 test）。

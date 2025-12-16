@@ -16,19 +16,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         if (!StringUtils.hasText(request.username()) || !StringUtils.hasText(request.password())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "用户名或密码为空"));
         }
 
-        // 简易校验：仅作为占位。真实场景应替换为用户服务/LDAP/OIDC。
-        if ("admin".equals(request.username()) && "admin123".equals(request.password())) {
+        AuthUser user = authService.login(request.username(), request.password());
+        if (user != null && user.password().equals(request.password())) {
             var token = UUID.randomUUID().toString();
             return ResponseEntity.ok(
                     Map.of(
                             "token", token,
-                            "user", Map.of("username", request.username(), "role", "admin"),
+                            "user", Map.of("username", user.username(), "role", user.role()),
                             "issuedAt", Instant.now().toString()));
         }
 

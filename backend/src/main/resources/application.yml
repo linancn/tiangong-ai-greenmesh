@@ -55,7 +55,7 @@ spring:
     activate:
       on-profile: dm8
   datasource:
-    url: jdbc:dm://${DM8_HOST:localhost}:${DM8_PORT:5236}/${DM8_DB:GMESH}
+    url: jdbc:dm://${DM8_HOST:localhost}:${DM8_PORT:5236}?schema=${DM8_SCHEMA:SYSDBA}
     username: ${DM8_USER:SYSDBA}
     password: ${DM8_PASSWORD:dm8pass}
     driver-class-name: dm.jdbc.driver.DmDriver

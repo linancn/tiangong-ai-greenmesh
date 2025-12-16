@@ -1,8 +1,8 @@
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { theme } from '../app/theme'
-import StatusCard from './StatusCard'
+import { theme } from '../src/app/theme'
+import StatusCard from '../src/components/StatusCard'
 
 describe('StatusCard', () => {
   it('renders title and value', () => {
