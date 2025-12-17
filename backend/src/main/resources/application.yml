@@ -47,6 +47,9 @@ spring:
       mode: always
       schema-locations: classpath:db/base-schema.sql
       continue-on-error: true
+app:
+  seed:
+    demo-enabled: true
   flyway:
     enabled: false
 
@@ -78,3 +81,6 @@ spring:
         enabled: false
   flyway:
     enabled: false # Flyway不内置支持DM，关闭自动迁移，待使用达梦方言插件或手工脚本后再开启
+app:
+  seed:
+    demo-enabled: true # 若不希望 DM8 自动注入演示数据，可将 APP_SEED_DEMO_ENABLED=false

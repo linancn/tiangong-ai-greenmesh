@@ -31,6 +31,7 @@
 - 探活接口：`GET /api/status`。
 - `application.yml`：profiles `dev`(H2) / `dm8`(达梦)；Flyway disabled in dm8；Redis/Kafka 通过 env 覆盖。DM8 URL 形如 `jdbc:dm://host:5236?schema=SYSDBA`（默认 schema=SYSDBA），需提供 `DM8_USER/DM8_PASSWORD`。
 - 基础域 schema：`backend/src/main/resources/db/base-schema.sql`（主数据/时序/告警/风光预测/气象映射/评估/微电网拓扑与指令/约束与调度计划/负荷预测/DR+VPP/储能策略与状态/分时电价与碳强度/策略档案与碳核算）。dev(H2) 已通过 `spring.sql.init` 自动加载，DM8 需手动执行后再启动。`DatabaseInitializer` 仍负责 USERS 占位表。
+- dev profile 会通过 `DevDataSeeder` 自动注入示例数据（园区/资产/测点、源侧预测、最新测点值、调度计划+明细），用于前端展示；DM8 profile 默认为开启（可通过环境变量 `APP_SEED_DEMO_ENABLED=false` 关闭），便于联调时直接展示。
 - CORS：`app.cors.allowed-origins` 支持配置（默认 http://localhost:5173）。
 - 认证与数据：`/api/auth/login` 现读取数据库表 `USERS`（JdbcTemplate，启动时自动建表并插入默认账号 admin/admin123，仅限开发），需上线前接入 IAM/OIDC 并移除默认账号。
 - 测试：`./gradlew test`（包含 AuthController 登录流程测试，使用 dev profile/H2）。

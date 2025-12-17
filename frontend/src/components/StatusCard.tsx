@@ -2,7 +2,7 @@ import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded'
 import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
-import type { StatusLevel } from '../api/mockClient'
+import type { StatusLevel } from '../types/common'
 
 type StatusCardProps = {
   title: string
