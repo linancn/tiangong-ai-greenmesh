@@ -51,7 +51,7 @@
   - 测试：JUnit 5 + Testcontainers（本地可用 DM8 镜像/或容器映射）、WireMock。
 
 5) 数据与存储（DM8 为主）
-- 基础域 DDL：`backend/src/main/resources/db/base-schema.sql`（主数据/时序/告警）；dev(H2) 通过 `spring.sql.init` 自动加载，DM8 环境请手工执行后再启动服务。
+- 基础域 DDL：`backend/src/main/resources/db/base-schema.sql`（主数据/时序/告警 + 风光预测/气象映射/评估 + 微电网拓扑/运行/指令 + 调度约束/计划/指令 + 负荷预测 + DR/VPP + 储能策略与状态 + 分时电价/碳强度 + 策略档案/碳核算）；dev(H2) 通过 `spring.sql.init` 自动加载，DM8 环境请手工执行后再启动服务。
 - 模型分层：主数据（园区/设备/计量点/因子）、业务数据（核算记录/调度令牌/事件）、时序数据（功率/电量/SoC/电价/碳因子）。
 - DM8 设计：时序表使用分区（按天/月），索引覆盖 device_id + ts；冷热分离（近期热数据，历史归档分区只读）；写入采用批量/异步。
 - 典型表（示例）：device, meter_point, factor, carbon_boundary, carbon_record, dispatch_plan, dispatch_command, dispatch_feedback, audit_event, time_series_energy, time_series_power, price_slot。
@@ -89,6 +89,7 @@
 - /frontend: Vite + React + MUI 前端工程（后续执行 `npm create vite@latest` 初始化）。
 - /backend: Spring Boot 3 + Java 21 后端工程（Gradle/Maven）；模块按上节命名。
 - /docs: 架构/数据字典/接口契约；本文件可放 /docs/architecture.md。
+- API 契约：`docs/api-contracts.md`（阶段 0 基础域/预测/调度/DR/储能/核算接口形态，供前端替换 mock 调用）。
 
 12) 渐进式智能化路线（在规则稳定后）
 - 阶段 1：规则/阈值/静态策略 + 预测占位接口，所有计算可解释可回放。
