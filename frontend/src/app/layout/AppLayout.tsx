@@ -1,4 +1,6 @@
 import BoltRoundedIcon from '@mui/icons-material/BoltRounded'
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined'
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
 import StorageOutlinedIcon from '@mui/icons-material/StorageOutlined'
 import {
@@ -11,9 +13,13 @@ import {
   Tab,
   Tabs,
   Toolbar,
+  Tooltip,
   Typography,
 } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import { useContext } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { ColorModeContext } from '../theme'
 
 const navItems = [
   { label: '态势总览', path: '/' },
@@ -35,6 +41,9 @@ function AppLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const activePath = resolveActivePath(location.pathname)
+  const theme = useTheme()
+  const { toggleMode } = useContext(ColorModeContext)
+  const isDark = theme.palette.mode === 'dark'
 
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
@@ -90,6 +99,18 @@ function AppLayout() {
             <Chip label="规则兜底" color="success" variant="outlined" size="small" />
             <Chip label="可追溯" color="primary" variant="outlined" size="small" />
             <Chip label="DM8" icon={<StorageOutlinedIcon />} size="small" />
+            <Tooltip title={isDark ? '切换到明亮模式' : '切换到深色模式'}>
+              <Box>
+                <Chip
+                  icon={isDark ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
+                  label={isDark ? 'Light' : 'Dark'}
+                  variant="outlined"
+                  onClick={toggleMode}
+                  clickable
+                  size="small"
+                />
+              </Box>
+            </Tooltip>
           </Stack>
         </Toolbar>
       </AppBar>
