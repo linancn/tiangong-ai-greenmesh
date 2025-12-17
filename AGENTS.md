@@ -6,6 +6,7 @@
 - 目录：`frontend/`（Vite React）、`backend/`（Spring Boot）、`docker-compose.yml`（在 backend 下）、`jdbc/`（驱动与方言包，勿入库）、根目录 `.env`（本地口令，已 gitignore）。
 - 运行：前端 `npm run dev`；后端 dev(H2) `./gradlew bootRun`；后端 DM8 `SPRING_PROFILES_ACTIVE=dm8 ... ./gradlew bootRun`；联调栈 `cd backend && docker compose up -d ...`。
 - 登录（开发占位）：后端 `/api/auth/login` 简易校验账号 `admin/admin123` 返回 token；前端提供 `/login` 页面并用保护路由，未登录会跳转登录。上线前必须替换为真实认证/鉴权。
+- 文档：已配置 Context7 MCP，需要查阅依赖/库文档时优先通过 Context7 获取。
 
 安全与敏感信息
 - `.env`（根目录）含口令占位，已被忽略；切勿提交真实密码/令牌。
