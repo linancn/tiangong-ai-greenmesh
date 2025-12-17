@@ -1,16 +1,10 @@
 import EnergySavingsLeafRoundedIcon from '@mui/icons-material/EnergySavingsLeafRounded'
 import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded'
-import {
-  Chip,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Chip, Paper, Stack, Typography } from '@mui/material'
 import Grid from '@mui/material/GridLegacy'
-import type { EChartsOption } from 'echarts'
-import ReactECharts from 'echarts-for-react'
-import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { LineChart } from '@mui/x-charts/LineChart'
+import { useTheme } from '@mui/material/styles'
 import { fetchCarbonSummaries, fetchCarbonTrend } from '../../api/mockClient'
 
 function CarbonPage() {
@@ -22,33 +16,7 @@ function CarbonPage() {
     queryKey: ['carbon', 'trend'],
     queryFn: fetchCarbonTrend,
   })
-
-  const option: EChartsOption = useMemo(() => {
-    return {
-      backgroundColor: 'transparent',
-      tooltip: { trigger: 'axis' },
-      grid: { top: 30, left: 40, right: 20, bottom: 30 },
-      xAxis: {
-        type: 'category',
-        data: trend.map((item) => item.label),
-      },
-      yAxis: {
-        type: 'value',
-        name: '吨 CO₂e',
-      },
-      series: [
-        {
-          name: '周度排放',
-          type: 'line',
-          smooth: true,
-          areaStyle: { opacity: 0.08 },
-          data: trend.map((item) => item.emissions),
-          itemStyle: { color: '#0f766e' },
-          showSymbol: false,
-        },
-      ],
-    }
-  }, [trend])
+  const theme = useTheme()
 
   return (
     <Stack spacing={2}>
@@ -102,7 +70,27 @@ function CarbonPage() {
         <Typography variant="body2" color="text.secondary" mb={2}>
           统一口径与因子版本，生成碳账本；支持按时间点回放与复算。
         </Typography>
-        <ReactECharts option={option} style={{ height: 320 }} />
+        <LineChart
+          height={320}
+          dataset={trend}
+          xAxis={[{ scaleType: 'point', dataKey: 'label' }]}
+          yAxis={[{ label: '吨 CO₂e' }]}
+          series={[
+            {
+              id: 'emissions',
+              label: '周度排放',
+              dataKey: 'emissions',
+              area: true,
+              curve: 'monotoneX',
+              color: theme.palette.success.main,
+              showMark: false,
+            },
+          ]}
+          slotProps={{
+            legend: { position: { vertical: 'top', horizontal: 'left' } },
+          }}
+          margin={{ top: 32, right: 24, left: 56, bottom: 32 }}
+        />
       </Paper>
 
       <Paper

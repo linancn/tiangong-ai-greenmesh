@@ -4,7 +4,7 @@
 已初始化的内容
 - 技术栈：Vite 7 + React 19 + TypeScript + MUI 7；状态管理 TanStack Query（数据）+ React Router；样式使用 MUI 主题 + 基础全局样式。
 - 业务骨架：总览、调度、碳核算、审计 4 个路由，配合 mock 数据（`src/api/mockClient.ts`）；全局布局在 `src/app/layout/AppLayout.tsx`。
-- 可视化：ECharts（`echarts-for-react`）用于实时曲线/趋势，MUI 组件用于卡片/表格/Chip。
+- 可视化：MUI X Charts 用于趋势/曲线，MUI 组件用于卡片/表格/Chip。
 - 质量：ESLint（含 prettier 兼容）、Vitest + Testing Library，`src/setupTests.ts` 已注册 jest-dom。
 
 主要目录

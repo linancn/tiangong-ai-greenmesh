@@ -19,7 +19,7 @@
 - Spring Data JDBC 未启用（dm8 profile 下关闭 jdbc repositories），后续如需使用达梦方言需手动配置。
 
 前端要点
-- 技术栈：Vite 7、React 19、TypeScript、MUI、TanStack Query、React Router、ECharts。`src/api/mockClient.ts` 为示例数据，真实接口接入后替换。
+- 技术栈：Vite 7、React 19、TypeScript、MUI、TanStack Query、React Router、MUI X Charts。`src/api/mockClient.ts` 为示例数据，真实接口接入后替换。
 - 命令：`npm run dev` / `build` / `lint` / `test` / `format`。
 - 测试：React Testing Library + Vitest，示例 `src/features/auth/LoginPage.test.tsx`。
 

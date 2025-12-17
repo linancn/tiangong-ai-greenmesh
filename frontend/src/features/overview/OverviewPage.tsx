@@ -14,10 +14,9 @@ import {
   Typography,
 } from '@mui/material'
 import Grid from '@mui/material/GridLegacy'
-import type { EChartsOption } from 'echarts'
-import ReactECharts from 'echarts-for-react'
-import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { LineChart } from '@mui/x-charts/LineChart'
+import { useTheme } from '@mui/material/styles'
 import {
   fetchAuditEvents,
   fetchOverviewMetrics,
@@ -39,50 +38,7 @@ function OverviewPage() {
     queryKey: ['overview', 'events'],
     queryFn: fetchAuditEvents,
   })
-
-  const option: EChartsOption = useMemo(() => {
-    const labels = timeline.map((item) => item.label)
-    return {
-      backgroundColor: 'transparent',
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['功率 (MW)', 'SoC (%)', '碳强度'], top: 0 },
-      grid: { top: 40, left: 40, right: 60, bottom: 30 },
-      xAxis: { type: 'category', data: labels, boundaryGap: false },
-      yAxis: [
-        { type: 'value', name: 'MW' },
-        { type: 'value', name: 'SoC %', min: 0, max: 100, position: 'right' },
-        { type: 'value', name: 'kgCO₂/MWh', position: 'right', offset: 45 },
-      ],
-      series: [
-        {
-          name: '功率 (MW)',
-          type: 'line',
-          smooth: true,
-          data: timeline.map((item) => item.powerMw),
-          areaStyle: { opacity: 0.08 },
-          showSymbol: false,
-          itemStyle: { color: '#0f766e' },
-        },
-        {
-          name: 'SoC (%)',
-          type: 'line',
-          yAxisIndex: 1,
-          smooth: true,
-          data: timeline.map((item) => item.soc),
-          showSymbol: false,
-          itemStyle: { color: '#2563eb' },
-        },
-        {
-          name: '碳强度',
-          type: 'bar',
-          yAxisIndex: 2,
-          data: timeline.map((item) => item.carbonIntensity),
-          itemStyle: { color: '#f97316', opacity: 0.6 },
-          barMaxWidth: 18,
-        },
-      ],
-    }
-  }, [timeline])
+  const theme = useTheme()
 
   return (
     <Stack spacing={2}>
@@ -113,11 +69,49 @@ function OverviewPage() {
             <Typography variant="body2" color="text.secondary" mb={2}>
               秒级采集，数据口径统一；功率、SoC、碳强度同轴展示便于对齐调度与核算。
             </Typography>
-            <ReactECharts
-              option={option}
-              style={{ height: 340, width: '100%' }}
-              notMerge
-              lazyUpdate
+            <LineChart
+              height={340}
+              dataset={timeline}
+              xAxis={[{ scaleType: 'point', dataKey: 'label' }]}
+              yAxis={[
+                { id: 'power', label: 'MW' },
+                { id: 'soc', label: 'SoC %', position: 'right', min: 0, max: 100 },
+                { id: 'carbon', label: 'kgCO₂/MWh', position: 'right' },
+              ]}
+              series={[
+                {
+                  id: 'power',
+                  label: '功率 (MW)',
+                  dataKey: 'powerMw',
+                  yAxisKey: 'power',
+                  area: true,
+                  color: theme.palette.success.main,
+                  curve: 'monotoneX',
+                  showMark: false,
+                },
+                {
+                  id: 'soc',
+                  label: 'SoC (%)',
+                  dataKey: 'soc',
+                  yAxisKey: 'soc',
+                  color: theme.palette.primary.main,
+                  curve: 'monotoneX',
+                  showMark: false,
+                },
+                {
+                  id: 'carbon',
+                  label: '碳强度',
+                  dataKey: 'carbonIntensity',
+                  yAxisKey: 'carbon',
+                  color: theme.palette.warning.main,
+                  curve: 'monotoneX',
+                  showMark: false,
+                },
+              ]}
+              slotProps={{
+                legend: { direction: 'row', position: { vertical: 'top', horizontal: 'left' } },
+              }}
+              margin={{ top: 40, right: 72, left: 56, bottom: 32 }}
             />
           </Paper>
         </Grid>
