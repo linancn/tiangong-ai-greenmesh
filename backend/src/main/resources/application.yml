@@ -44,7 +44,9 @@ spring:
       port: ${REDIS_PORT:6379}
   sql:
     init:
-      mode: never
+      mode: always
+      schema-locations: classpath:db/base-schema.sql
+      continue-on-error: true
   flyway:
     enabled: false
 

@@ -17,6 +17,8 @@
 - 镜像：`cnxc/dm8:20250423-kylin`（可替换）。初始化口令需符合复杂度。
 - 运行后端时需提供：`DM8_HOST`、`DM8_PORT`、`DM8_USER`、`DM8_PASSWORD`。当前 Flyway 默认禁用（官方未内置 DM 方言），如启用需自备方言/脚本。
 - Spring Data JDBC 未启用（dm8 profile 下关闭 jdbc repositories），后续如需使用达梦方言需手动配置。
+- docker compose 运行：`cd backend && docker compose up -d dm8`，环境变量取自 `backend/.env`（包含 DM8_SYSDBA_PWD/DM8_HOST/DM8_PORT/DM8_USER/DM8_PASSWORD/DM8_SCHEMA）。
+- 容器内连接示例（SYSDBA）：`docker exec -it dm8 /opt/dmdbms/bin/disql ${DM8_USER}/${DM8_PASSWORD}`，可在输入后执行 `set schema ${DM8_SCHEMA};`。本地驱动在 `backend/libs/`（gitignore）。
 
 前端要点
 - 技术栈：Vite 7、React 19、TypeScript、MUI、TanStack Query、React Router、MUI X Charts。`src/api/mockClient.ts` 为示例数据，真实接口接入后替换。
@@ -27,6 +29,7 @@
 - 依赖：web/validation/actuator、data-redis、spring-kafka、H2(dev)、DM8 JDBC(外部)。
 - 探活接口：`GET /api/status`。
 - `application.yml`：profiles `dev`(H2) / `dm8`(达梦)；Flyway disabled in dm8；Redis/Kafka 通过 env 覆盖。DM8 URL 形如 `jdbc:dm://host:5236?schema=SYSDBA`（默认 schema=SYSDBA），需提供 `DM8_USER/DM8_PASSWORD`。
+- 基础域 schema：`backend/src/main/resources/db/base-schema.sql`（主数据/时序/告警）。dev(H2) 已通过 `spring.sql.init` 自动加载，DM8 需手动执行后再启动。`DatabaseInitializer` 仍负责 USERS 占位表。
 - CORS：`app.cors.allowed-origins` 支持配置（默认 http://localhost:5173）。
 - 认证与数据：`/api/auth/login` 现读取数据库表 `USERS`（JdbcTemplate，启动时自动建表并插入默认账号 admin/admin123，仅限开发），需上线前接入 IAM/OIDC 并移除默认账号。
 - 测试：`./gradlew test`（包含 AuthController 登录流程测试，使用 dev profile/H2）。

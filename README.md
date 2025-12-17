@@ -1,6 +1,8 @@
 面向“零碳园区 / 绿电直连 / 新能源调度”的 IT 系统架构与技术栈设计（规则先行，可解释、可追溯，随后再优化/智能化）
 ================================================================================================
 
+详细领域设计与数据流整理见 `docs/platform-design.md`。
+
 1) 设计目标与约束
 - 实时态势 + 可控调度：源-网-荷-储-充状态秒级感知，调度分钟级闭环，异常可回退。
 - 碳约束可解释：核算边界/因子/口径统一，计算链路可追溯。
@@ -49,6 +51,7 @@
   - 测试：JUnit 5 + Testcontainers（本地可用 DM8 镜像/或容器映射）、WireMock。
 
 5) 数据与存储（DM8 为主）
+- 基础域 DDL：`backend/src/main/resources/db/base-schema.sql`（主数据/时序/告警）；dev(H2) 通过 `spring.sql.init` 自动加载，DM8 环境请手工执行后再启动服务。
 - 模型分层：主数据（园区/设备/计量点/因子）、业务数据（核算记录/调度令牌/事件）、时序数据（功率/电量/SoC/电价/碳因子）。
 - DM8 设计：时序表使用分区（按天/月），索引覆盖 device_id + ts；冷热分离（近期热数据，历史归档分区只读）；写入采用批量/异步。
 - 典型表（示例）：device, meter_point, factor, carbon_boundary, carbon_record, dispatch_plan, dispatch_command, dispatch_feedback, audit_event, time_series_energy, time_series_power, price_slot。
